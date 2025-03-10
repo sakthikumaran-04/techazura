@@ -21,6 +21,14 @@ const participantSchema = new mongoose.Schema({
         type: String,
         required: [true,"participant must have a transaction id"]
     },
+    technicalEvent:{
+        type:String,
+        required: [true,"participant must have a technical event"]
+    },
+    nonTechnicalEvent:{
+        type:String,
+        required:[true,"participant must have a non technical event"]
+    },
     screenshot:{
         type: String,
         required: [true,"participant must have a payment screenshot"]

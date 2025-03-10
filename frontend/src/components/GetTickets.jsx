@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import toast from 'react-hot-toast';
 import { paymentQR } from "../helpers/image";
+import { eventsContent } from "../contents/contents";
+import { v4 as uuid } from "uuid";
 
 const TicketForm = () => {
   const [formData, setFormData] = useState({
@@ -8,8 +10,10 @@ const TicketForm = () => {
     email: "",
     phone: "",
     college: "",
-    transaction_id: "",
+    transactionId: "",
     screenshot: null,
+    technicalEvent: "none",
+    nonTechnicalEvent: "none"
   });
   const [loading, setLoading] = useState(false);
   
@@ -26,15 +30,23 @@ const TicketForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    if(!formData.name || !formData.email || !formData.phone || !formData.college || !formData.transactionId || !formData.screenshot){
+      toast.error("Please Fill All Fields.");
+      return;
+    }
+    if(formData.technicalEvent == "none"){
+      toast.error("Please Select a Technical Event.");
+      return;
+    }
     const formDataToSend = new FormData();
     formDataToSend.append("name", formData.name);
     formDataToSend.append("email", formData.email);
     formDataToSend.append("phone", formData.phone);
     formDataToSend.append("college", formData.college);
-    formDataToSend.append("transaction_id", formData.transaction_id);
+    formDataToSend.append("transactionId", formData.transactionId);
     formDataToSend.append("screenshot", formData.screenshot);
-  
+    formDataToSend.append("technicalEvent", formData.technicalEvent);
+    formDataToSend.append("nonTechnicalEvent", formData.nonTechnicalEvent);
     try {
       setLoading(true);
       const response = await fetch(`${import.meta.env.VITE_API_ENDPOINT}/api/createTicket`, {
@@ -49,8 +61,10 @@ const TicketForm = () => {
           email: "",
           phone: "",
           college: "",
-          transaction_id: "",
+          transactionId: "",
           screenshot: null,
+          technicalEvent:"none",
+          nonTechnicalEvent: "none"
         });
 
         if (fileInputRef.current) {
@@ -79,14 +93,14 @@ const TicketForm = () => {
   return (
     <div className="max-w-lg bg-white p-6 shadow-md rounded-lg lg:my-32 my-12 max-sm:mx-3 mx-auto">
       <h2 className="text-2xl font-semibold text-center mb-4">🎟️ Secure Your Spot</h2>
-      <p className="text-center pb-4">Just pay &#8377; 200 for 1 Technical and 1 Non-Technical Event</p>
+      <p className="text-center pb-4">Pay &#8377; 200 for 1 Technical and 1 Non-Technical Event</p>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input type="text" name="name" placeholder="Full Name" value={formData.name} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded" required />
-        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded" required />
-        <input type="tel" name="phone" placeholder="Phone Number" value={formData.phone} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded" required />
-        <input type="text" name="college" placeholder="College Name" value={formData.college} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded" required />
+        <input type="text" name="name" placeholder="Full Name" value={formData.name} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded" />
+        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded" />
+        <input type="tel" name="phone" placeholder="Phone Number" value={formData.phone} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded" />
+        <input type="text" name="college" placeholder="College Name" value={formData.college} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded" />
         <img src={paymentQR} className="rounded" alt="payment qr code" />
-        <input type="text" name="transaction_id" placeholder="Transaction Id" value={formData.transaction_id} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded" required />
+        <input type="text" name="transactionId" placeholder="Transaction Id" value={formData.transactionId} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded" />
         <label htmlFor="screenshot" className="">Payment Screenshot :</label>
         <input
           type="file"
@@ -96,9 +110,25 @@ const TicketForm = () => {
           ref={fileInputRef} // Assign ref to file input
           className="w-full p-2 mt-2 border border-gray-300 rounded"
           placeholder="screenshot"
-          required
         />
-        
+        <label htmlFor="technicalEvent">Select a Technical Event :</label>
+        <select name="technicalEvent" id="technicalEvent" value={formData.technicalEvent} className="w-full p-2 mt-2 border border-gray-300 rounded" onChange={handleChange}>
+          <option value="none">None</option>
+          {
+            eventsContent.map((item)=>(
+               item.type == "technical" ? <option value={item.title} key={uuid()}>{item.title}</option> : " " 
+            ))
+          }
+        </select>
+        <label htmlFor="nonTechnicalEvent">Select a Non-Technical Event :</label>
+        <select name="nonTechnicalEvent" id="nonTechnicalEvent" value={formData.nonTechnicalEvent} className="w-full p-2 mt-2 border border-gray-300 rounded" onChange={handleChange}>
+          <option value="none">None</option>
+          {
+            eventsContent.map((item)=>(
+               item.type == "non-technical" ? <option value={item.title} key={uuid()}>{item.title}</option> : " " 
+            ))
+          }
+        </select>
         <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-700 transition" disabled={loading}>
           {loading ? "Loading..." : "Request Ticket"}
         </button>

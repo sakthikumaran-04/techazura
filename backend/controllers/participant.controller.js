@@ -3,8 +3,8 @@ import { Participant } from "../models/participant.model.js";
 
 export async function createParticipant(req,res){
     try {
-        const {name,email,phone,college,transaction_id} = req.body;
-        if (!name || !email || !phone || !college || !transaction_id) {
+        const {name,email,phone,college,transactionId,technicalEvent,nonTechnicalEvent} = req.body;
+        if (!name || !email || !phone || !college || !transactionId) {
             return res.status(400).json({ success: false, message: 'All fields are required' });
         }
         let imageUrl = '';
@@ -13,7 +13,18 @@ export async function createParticipant(req,res){
         } else {
             return res.status(400).json({ success: false, message: 'Image is required' });
         }
-        const newParticipant = new Participant({name,email,phone,college,transactionId:transaction_id,screenshot:imageUrl});
+        const existingParticipant = await Participant.find({
+            $or: [
+              { email },
+              { phone },
+              { transactionId }
+            ]
+          });
+          console.log(existingParticipant);
+        if(existingParticipant.length!=0){
+            return res.status(400).json({ success: false, message: 'User with this detail already exist!' });
+        }          
+        const newParticipant = new Participant({name,email,phone,college,transactionId,screenshot:imageUrl,technicalEvent,nonTechnicalEvent});
         await newParticipant.save();
         await sendWelcomeEmail(email,name);
         return res.status(201).json({
