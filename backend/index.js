@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { connectToDB } from "./utils/connectToDB.js";
 import participantRouter from "./routes/participant.route.js";
 import cors from "cors";
+import adminRouter from "./routes/admin.route.js";
 
 dotenv.config();
 
@@ -11,8 +12,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
   cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: ["https://techazura.online"],
+    methods: ["GET", "POST", "PUT", "DELETE","OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
@@ -23,6 +24,7 @@ app.use(async (req, res, next) => {
 });
 
 app.use("/api", participantRouter);
+app.use("/api/admin", adminRouter);
 
 app.get("/", (req, res) => {
   res.json({ message: "Backend is working!" });
