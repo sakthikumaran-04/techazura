@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
   cors({
-    origin: ["https://www.techazura.online"],
+    origin: ["https://www.techazura.online","https://techazura-admin.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE","OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
