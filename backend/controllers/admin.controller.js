@@ -2,6 +2,7 @@ import { sendTicketEmail } from "../mailtrap/email.js";
 import { Admin } from "../models/admin.model.js";
 import { Participant } from "../models/participant.model.js";
 import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export async function approveTicket(req, res) {
     try {
@@ -76,12 +77,15 @@ export async function fetchAllVerifiedUsers(req,res) {
 
 export async function createAdmin(req,res){
     try {
+            const createAdminKey = req.header('x-api-key');
+            if(!createAdminKey || createAdminKey!=process.env.CREATE_ADMIN_SECRET){
+                return res.status(400).json({ success: false, message: 'Unauthorized Access' });
+            }
             const {name,email,password} = req.body;
             if (!name || !email || !password) {
                 return res.status(400).json({ success: false, message: 'All fields are required' });
             }
             const existingAdmin = await Admin.find({email});
-            console.log(existingAdmin);
             if(existingAdmin.length!=0){
                 return res.status(400).json({ success: false, message: 'Admin with this email Id already exist!' });
             }          
@@ -115,7 +119,8 @@ export async function loginAdmin(req,res){
         if(!isPasswordCorrect){
             return res.status(400).json({success:false,message:"Invalid credentials"});
         }
-        return res.status(200).json({success:true,message:"admin login success",adminId:admin[0]._id});
+        const token = jwt.sign({adminId:admin[0]._id},process.env.SECRET,{expiresIn:'1d'});
+        return res.status(200).json({success:true,message:"admin login success",adminId:token});
     } catch (error) {
         console.error(`Error while login Admin : ${error.message}`);
         return res.status(500).json({

@@ -17,7 +17,7 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
+app.options("*", cors());
 app.use(async (req, res, next) => {
   await connectToDB();
   next();
