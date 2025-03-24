@@ -130,3 +130,28 @@ export async function loginAdmin(req,res){
         });
     }
 }
+
+export async function deleteParticipant(req,res){
+    try {
+        if(!req.isAdminAuthenticated){
+            return res.status(400).json({ success: false, message: 'No Token Provided' });
+        }
+        const { id } = req.params; 
+        if(!id){
+            return res.status(400).json({ success: false, message: 'Id is required' });
+        }
+        const deletedUser = await Participant.deleteOne({ _id: id });
+        console.log("Deleted user:", deletedUser);
+        return res.status(201).json({
+            success: true,
+            message: 'participant deleted successfully'
+        });
+    } catch (error) {
+        console.error(`Error while deleting participant: ${error.message}`);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message,
+        });
+    }
+}
