@@ -3,6 +3,8 @@ import { Admin } from "../models/admin.model.js";
 import { Participant } from "../models/participant.model.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 export async function approveTicket(req, res) {
     try {
