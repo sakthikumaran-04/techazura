@@ -5,6 +5,7 @@ import { BrowserRouter, Routes , Route } from "react-router-dom"
 import SingleEvent from "./components/SingleEvent"
 import { Toaster } from 'react-hot-toast';
 import EventCoordinators from "./components/EventCoordinators"
+import GetTickets from "./components/GetTickets"
 import RegClosed from "./components/RegClosed"
 function App() {
 
@@ -16,7 +17,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/event/:id" element={<SingleEvent />} />
-      <Route path="/get-ticket" element={<RegClosed />} />
+      <Route path="/get-ticket" element={<GetTickets />} />
       <Route path="/coordinators" element={<EventCoordinators />} />
       <Route path="*" element={<Home />} />
     </Routes>
