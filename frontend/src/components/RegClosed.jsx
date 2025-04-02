@@ -1,8 +1,12 @@
 import { faPhone, faXmark } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { useEffect } from "react";
 import { Link } from "react-router-dom"
 
 function RegClosed() {
+  useEffect(() => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+      }, []); 
   return (
     <main className="max-w-lg min-h-[calc(100vh-100px)]  max-sm:mx-3 mx-auto text-center max-md:text-sm flex items-center justify-center">
         <div className=" bg-white p-6 shadow-md rounded-lg  md:my-32">
